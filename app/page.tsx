@@ -10,7 +10,7 @@ export default function Home() {
   const [query, setQuery] = useState('SELECT * FROM instructor LIMIT 10;');
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [dbInfo, setDbInfo] = useState(null);
   const [health, setHealth] = useState(null);
 
