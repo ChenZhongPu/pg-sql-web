@@ -28,8 +28,8 @@ export default function Home() {
         const dbInfoData = await dbInfoResponse.json();
         setDbInfo(dbInfoData);
       } catch (err) {
-        console.error('初始化数据获取失败:', err);
-        setError('无法连接到服务器，请检查API服务是否运行');
+        console.error('Init Database Error:', err);
+        setError('Cannot connect to the database');
       }
     }
 
@@ -53,13 +53,13 @@ export default function Home() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || '查询执行失败');
+        throw new Error(errorData.detail || 'Error');
       }
 
       const data = await response.json();
       setResults(data);
     } catch (err) {
-      console.error('查询执行错误:', err);
+      console.error('Error:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -75,12 +75,12 @@ export default function Home() {
       </Head>
 
       <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center mb-8">SQL 学习平台</h1>
+        <h1 className="text-3xl font-bold text-center mb-8">SQL Learning Platform</h1>
 
         {/* 系统状态信息 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4">系统状态</h2>
+            <h2 className="text-xl font-semibold mb-4">System Status</h2>
             {health ? (
               <div className="flex items-center">
                 <div
@@ -93,12 +93,12 @@ export default function Home() {
                 </span>
               </div>
             ) : (
-              <p>加载中...</p>
+              <p>Loading...</p>
             )}
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4">数据库信息</h2>
+            <h2 className="text-xl font-semibold mb-4">Database Information</h2>
             {dbInfo ? (
               <ul>
                 <li className="mb-2">
