@@ -1,6 +1,9 @@
 "use client";
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
+import CodeMirror from '@uiw/react-codemirror';
+import { sql } from '@codemirror/lang-sql';
+import { oneDark } from '@codemirror/theme-one-dark';
 
 // API基础URL，根据实际部署情况修改
 const API_BASE_URL = 'https://pg-server.yichamao.com';
@@ -13,6 +16,8 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [dbInfo, setDbInfo] = useState(null);
   const [health, setHealth] = useState(null);
+
+  const [darkMode, setDarkMode] = useState(false);
 
   // 页面加载时获取健康状态和数据库信息
   useEffect(() => {
@@ -67,7 +72,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-emerald-950">
       <Head>
         <title>SQL 学习平台</title>
         <meta name="description" content="一个用于学习SQL的交互式平台" />
@@ -80,7 +85,7 @@ export default function Home() {
         {/* 系统状态信息 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4">System Status</h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-800">系统状态</h2>
             {health ? (
               <div className="flex items-center">
                 <div
@@ -88,7 +93,7 @@ export default function Home() {
                     health.status === 'healthy' ? 'bg-green-500' : 'bg-red-500'
                   }`}
                 ></div>
-                <span>
+                <span className="text-gray-700">
                   {health.status === 'healthy' ? '系统正常运行中' : '系统异常'}
                 </span>
               </div>
@@ -98,9 +103,9 @@ export default function Home() {
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4">Database Information</h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-800">数据库信息</h2>
             {dbInfo ? (
-              <ul>
+              <ul className="text-gray-700">
                 <li className="mb-2">
                   <span className="font-medium">数据库大小: </span>
                   {dbInfo.database_size}
@@ -122,14 +127,16 @@ export default function Home() {
 
         {/* SQL查询区域 */}
         <div className="bg-white p-6 rounded-lg shadow mb-6">
-          <h2 className="text-xl font-semibold mb-4">SQL查询</h2>
-          <div className="mb-4">
-            <textarea
-              className="w-full h-48 p-3 border border-gray-300 rounded-md font-mono text-sm"
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">SQL查询</h2>
+          <div className="mb-4 border border-gray-300 rounded-md overflow-hidden">
+            <CodeMirror
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="输入您的SQL查询语句..."
-            ></textarea>
+              height="200px"
+              extensions={[sql()]}
+              theme={oneDark}
+              onChange={(value) => setQuery(value)}
+              className="font-mono text-sm"
+            />
           </div>
 
           <div className="flex justify-between items-center">
@@ -140,13 +147,13 @@ export default function Home() {
             >
               {loading ? '执行中...' : '执行查询'}
             </button>
-            <p className="text-sm text-gray-500">注意: 只支持SELECT查询</p>
+            <p className="text-sm text-gray-700">注意: 只支持SELECT查询</p>
           </div>
         </div>
 
         {/* 错误信息 */}
         {error && (
-          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6">
+          <div className="bg-red-100 border-l-4 border-red-700 text-red-700 p-4 mb-6">
             <p className="font-bold">错误</p>
             <p>{error}</p>
           </div>
@@ -155,7 +162,7 @@ export default function Home() {
         {/* 查询结果 */}
         {results && (
           <div className="bg-white p-6 rounded-lg shadow overflow-x-auto">
-            <h2 className="text-xl font-semibold mb-4">查询结果</h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-800">查询结果</h2>
             <div className="mb-2 text-sm text-gray-600">
               返回 {results.rowCount} 行数据
               {results.hasMore && ' (超出显示限制，只显示前1000行)'}
@@ -168,7 +175,7 @@ export default function Home() {
                     {results.columns.map((column, index) => (
                       <th
                         key={index}
-                        className="py-2 px-4 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        className="py-2 px-4 border-b text-left text-xs font-medium text-gray-700 uppercase tracking-wider"
                       >
                         {column}
                       </th>
@@ -184,7 +191,7 @@ export default function Home() {
                       {results.columns.map((column, colIndex) => (
                         <td
                           key={colIndex}
-                          className="py-2 px-4 border-b text-sm text-gray-500"
+                          className="py-2 px-4 border-b text-sm text-gray-700"
                         >
                           {row[column] === null
                             ? <span className="text-gray-400 italic">NULL</span>
@@ -198,13 +205,13 @@ export default function Home() {
                 </tbody>
               </table>
             ) : (
-              <p className="text-gray-500">查询未返回任何列</p>
+              <p className="text-gray-700">查询未返回任何列</p>
             )}
           </div>
         )}
       </main>
 
-      <footer className="border-t mt-12 py-6 text-center text-gray-500 text-sm">
+      <footer className="border-t mt-12 py-6 text-center text-white text-sm">
         <p>SQL学习平台 By CHEN Zhongpu &copy; {new Date().getFullYear()}</p>
       </footer>
     </div>
